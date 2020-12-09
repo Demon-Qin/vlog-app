@@ -69,6 +69,23 @@
       注册即代表同意
       <text class="text-primary">《xxx协议》</text>
     </view>
+	<view class="flex align-center px-5 py-3">
+		<view class="flex-1 flex align-center justify-center" @click="appLogin">
+			<view class="iconfont icon-weixin bg-success font-lg text-white flex align-center justify-center rounded-circle"
+			style="width: 100rpx;height: 100rpx;">
+			</view>	
+		</view>
+		<view class="flex-1 flex align-center justify-center">
+			<view class="iconfont icon-QQ bg-primary font-lg text-white flex align-center justify-center rounded-circle"
+			style="width: 100rpx;height: 100rpx;">
+			</view>
+		</view>
+		<view class="flex-1 flex align-center justify-center" @click="appLogin">
+			<view class="iconfont icon-xinlangweibo bg-warning font-lg text-white flex align-center justify-center rounded-circle"
+			style="width: 100rpx;height: 100rpx;">
+			</view>	
+		</view>
+	</view>
   </view>
 </template>
 
@@ -99,6 +116,52 @@
       }
     },
     methods: {
+		appLogin() {
+			let self = this;
+			uni.login({
+				provider:'weixin',
+				success:function(loginRes){
+					uni.getUserInfo({
+						provider:'weixin',
+						success: infoRes => {
+							console.log("获取微信账号信息")
+							console.log(infoRes);
+							console.log("获取微信账号信息")
+							let wxLoginDto = {
+								wxOpenId: infoRes.userInfo.openId,
+								nickname: infoRes.userInfo.nickName,
+								avatar: infoRes.userInfo.avatarUrl,
+								gender: infoRes.userInfo.gender
+							};
+							self.loading = true;
+							self.$H
+							    .post('/user/wxLogin',wxLoginDto)
+								.then(res =>{
+									self.loading = false;
+									console.log(res);
+										if(res){
+											console.log(res);
+											//修改vuex的state
+											self.$store.commit('login',res);
+											uni.switchTab({
+												url:'../my/my'
+											});
+										}else{
+											uni.showModal({
+												title:'登录失败'
+											});
+											return;
+										}
+								})
+								.catch(err => {
+									//登录失败
+									self.loading = false;
+								});
+					    }
+					});
+				}
+			});
+		},
       back() {
       uni.navigateBack({
         delta:1
@@ -188,6 +251,7 @@
           .post(url,data)
         .then(res => {
           this.loading = false;
+		  if(res){
           console.log(res);
           //修改vuex的state，持久化储存
           this.$store.commit('login',res);
@@ -207,7 +271,13 @@
               }
             }
           });
-        })
+        }else{
+			uni.showModal({
+				title:'登录失败'
+			});
+			return;
+			}
+		})
         .catch(err => {
           //登陆失败
           this.loading = false;

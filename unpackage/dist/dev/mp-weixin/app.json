@@ -1,11 +1,16 @@
 {
   "pages": [
+    "pages/login/login",
     "pages/index/index",
     "pages/news/news",
     "pages/msg/msg",
     "pages/news/news",
     "pages/my/my",
-    "pages/login/login"
+    "pages/user_set/user_set",
+    "pages/user-safe/user-safe",
+    "pages/about/about",
+    "pages/user-info/user-info",
+    "pages/user-feedback/user-feedback"
   ],
   "subPackages": [],
   "window": {
@@ -46,5 +51,9 @@
       }
     ]
   },
-  "usingComponents": {}
+  "usingComponents": {
+    "divider": "/components/common/divider",
+    "no-thing": "/components/common/no-thing"
+  },
+  "sitemapLocation": "sitemap77.json"
 }

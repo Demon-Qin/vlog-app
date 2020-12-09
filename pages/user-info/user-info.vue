@@ -102,11 +102,15 @@
 		},
 		methods: {
 		//显示三级联动城市组件
-			showCityPicker(){
-				this.$refs.mpvueCityPicker.show();
-			},
-		//三级联动提交
-			onConfirm(e){
+		    showCityPicker() {
+		      this.$refs.mpvueCityPicker.show();
+		    },
+		    //三级联动选择组件提交事件，监听相应的值并显示
+		    onConfirm(e) {
+		      this.pickerText = e.label;
+		    },
+			//修改生日
+			onDateChange(e){
 				this.birthday = e.detail.value;
 			},
 		//修改头像	
@@ -117,7 +121,7 @@
 				sourceType:['album','camera'],
 				success: res =>{
 					//本地文件地址
-					console.log(res.tempFilePaths[0]);
+					//console.log(res.tempFilePaths[0]);
 					this.$H
 					.upload('/user/upload',{
 						filePath:res.tempFilePaths[0],
@@ -154,14 +158,28 @@
 		 });
 	 },
 	 submit(){
-		 // let data ={
-			//  id:this.user.id,
-			//  phone:this.user.
-		 //}
-		 }
-	 },
-	 
-	 };
+		 let data ={
+			 id:this.user.id,
+			 phone:this.user.phone,
+			 password:this.user.password,
+			 nickname:this.nickname,
+			 avatar:this.user.avatar,
+			 gender:this.gender,
+			 birthday:this.birthday,
+			 address:this.pickerText,
+			 createTime:this.user.createTime
+		 };
+		 this.$H.post('/user/update',data).then(res =>{
+			 console.log(res);
+			 this.$store.commit('editUserInfo',data);
+			 uni.showToast({
+				 title:'修改资料成功',
+				 icon:'none'
+			 });
+		 });
+		} 
+	}
+ };
 </script>
 
 <style>

@@ -72,7 +72,7 @@
         },
         {
           name: '粉丝',
-          num:"1.1w+"
+          num:"100w+"
         }
         
       ]  
@@ -85,7 +85,7 @@
     }),
     //用户头像
     avatar() {
-      return this.user.avatar ? this.user.avatar : '/static/default.jpg';
+      return this.user.avatar!=null ? this.user.avatar : '/static/default.jpg';
     }
   },
   onLoad() {
