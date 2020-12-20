@@ -28,6 +28,11 @@ export default {
       user: state => state.user
     })
   },
+  onNavigationBarButtonTap() {
+	uni.navigateTo({
+		url: '../write/write',
+	})  
+  },
   onLoad() {
     uni.getSystemInfo({
       success: res => {
