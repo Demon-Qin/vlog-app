@@ -156,6 +156,15 @@
             }
             
         }
+        ,{
+            "path" : "pages/ArticleDetail/ArticleDetail",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

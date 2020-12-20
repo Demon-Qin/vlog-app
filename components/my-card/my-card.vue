@@ -1,5 +1,5 @@
 <template>
-	<view class="my-card" @click="onClick">		
+	<view class="my-card" @click="open">		
 		<view style="display: flex;">
 			<view class="thumb" style="width: 25%;">
 				<view >
@@ -39,9 +39,9 @@ export default {
 		}
 	},
 	methods: {
-		onClick() {
+		open() {
 			//在子组件my-card.vue 中将点击事件传回父组件index.vue
-			this.$emit('click');
+			this.$emit('open');
 		}
 	}
 };	

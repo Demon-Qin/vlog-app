@@ -1,7 +1,7 @@
 <template>
   <view>
     <view v-for="(article,index) in articles" :key="index">
-      <my-card :article="article"></my-card>
+      <my-card :article="article" @open="gotoDetail(article.id)"></my-card>
     </view>
   </view>
 </template>
@@ -108,7 +108,13 @@ export default {
           this.articles = res.data.data.list
         }
       });
-    }
+    },
+	gotoDetail(id) {
+		console.log('文章id：'+ id)
+		uni.navigateTo({
+			url: '../ArticleDetail/ArticleDetail?id=' +id
+		});
+	}
   }
 };
 </script>
