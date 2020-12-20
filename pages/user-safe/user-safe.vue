@@ -26,17 +26,17 @@
 				renewpassword:''
 			};
 		},
-		computed:{
+		computed: {
 			...mapState({
 				user:state => state.user
 			}),
-			disabled(){
+			disabled() {
 				return this.newpassword == '' || this.renewpassword == '';
 			}
 		},
 		methods: {
 		//验证
-			check(){
+			check() {
 				if(this.newpassword !== this.renewpassword){
 					uni.showToast({
 						title:'两次密码不一致',
@@ -46,13 +46,13 @@
 				}
 				return true;
 			},
-			submit(){
+			submit() {
 				if(!this.check()){
 					return;
 				}
 				let data = {
 					phone: this.user.phone,
-					password: this.user.newpassword,
+					password: this.newpassword,
 					nickname: this.user.nickname,
 					avatar: this.user.avatar,
 					gender: this.user.gender,

@@ -1,61 +1,121 @@
 <template>
-<view>
-	<uni-nav-bar :shadow="false" @click-left="clickLeft" @click-right="clickRight">
-		<block slot="left">
-			<view class="iconfont icon-qiandao ml-2 mr-2" style="font-size: 22px;color: #FF9619;">
-</view>
-        </block>
-		<view class="flex justify-center align-center rounded text-muted bg-light flex-1 mt-1"
-		style="margin-left:-46upx;height: 60upx ;"
-		@tap="openSearch">	
-		<view class="iconfont icon-sousuo mr-1"></view>
-			搜索帖子
-		</view>
-		<block slot="right">
-			<view class="icon iconfont icon-bianji1 text-dark" style="font-size: 22px;"></view>
-			</block>
-		</uni-nav-bar>
-			<view>
-				<view v-for="(card, index) in cards" :key="index" class="cardes">
-					<text class="font-lg">{{ card.title }}</text>
-					<image :src ="card.bgImg" class="cover"/>
-					<text class="font-md">{{card.content}}</text>
-					</view>
-			</view>
-		</view>
+  <view>
+    <view v-for="(article,index) in articles" :key="index">
+      <my-card :article="article"></my-card>
+    </view>
+  </view>
 </template>
 
 <script>
-	import uniNavBar from'@/components/uni-ui/uni-nav-bar/uni-nav-bar.vue'
+import { mapState } from 'vuex';
+import myCard from '@/components/my-card/my-card.vue';
+import $C from '@/common/config.js';
 export default {
   components:{
-	  uniNavBar
+    myCard
   },
-  
-data() {
-  return {
-    cards: [],
+  data() {
+    return {
+      articles: [],
+      pageNum: 1,
+      pageSize: 6,
+      more: true
+    };
+  },
+  computed:{
+    ...mapState({
+      loginStatus: state => state.loginStatus,
+      user: state => state.user
+    })
+  },
+  onLoad() {
+    uni.getSystemInfo({
+      success: res => {
+        this.scrollH = res.windowHeight - uni.upx2px(101);
+      }
+    });
+    uni.showLoading({
+      title: '加载中'
+    });
+    this.getData();
+    setTimeout(function() {
+      console.log('开启下拉刷新');
+    }, 1000);
+    uni.startPullDownRefresh();
+  },
+  //触底
+  onReachBottom() {
+    //没有更多数据了
+    if(!this.more) {
+      uni.showToast({
+        title: '已加载完毕',
+        duration:1000
+      });
+      //直接返回，不要执行下面的代码
+      return false;
+    }
+    //正常加载下一页
+    this.pageNum = this.pageNum + 1;
+    uni.showLoading({
+      title:'加载中'
+    });
+    uni.request({
+      url: $C.webUrl + '/article/page?pageNum='+this.pageNum+'&pageSize='+this.pageSize,
+      method:'POST',
+      header:{
+        userId:1
+      },
+      success: (res) => {
+        setTimeout(() => {
+          uni.hideLoading();
+        },100);
+        //追加到原数组的尾部，不能覆盖原数组
+        this.articles = this.articles.concat(res.data.data.list);
+        //已经最后一页
+        if(res.data.data.list.length < this.pageSize && this.pageNum > 0) {
+          this.more = false;
+        }
+      }
+    });
+  },
+  //下拉刷重新，要将当前页码重置为1，more属性回归成true
+  onPullDownRefresh() {
+    this.pageNum = 1
+    this.more = true
+    this.getData();
+    //1秒下拉复原
+    setTimeout(function() {
+      uni.stopPullDownRefresh();
+    },1000);
+  },
+  methods:{
+    //请求数据，使用了uni原生的request请求，
+    getData() {
+      uni.request({
+        url: $C.webUrl + '/article/page?pageNum='+this.pageNum+'&pageSize='+this.pageSize,
+        method: 'POST',
+        header: {
+          userId: 1 //把id改为数量少点的用户
+        },
+        success: (res) => {
+          //请求结束延时隐藏加载动画
+          setTimeout(() => {
+            uni.hideLoading();
+          },100);
+          //res.data.data包含了分页的许多信息，list属性才是真正的数据！
+          console.log(res.data.data.pageSize);
+          console.log(res.data.data.total);
+          this.articles = res.data.data.list
+        }
+      });
+    }
   }
-},
-onLoad(){
-	this.getData();
-},
-methods:{
-	getData(){
-		this.$H.get('/cards').then(res => {
-			this.cards=res;
-			console.log(this.cards)
-			console.log(this.cards[0])
-		});
-	}
-}
 };
-  
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-	.cardes{
+
+<style >
+	/* .cardes{
 		height: 600rpx;
 		display: flex;
 		flex-direction: column;
@@ -69,5 +129,5 @@ methods:{
   height :440px;
   border-radius: 10rpx;
   margin-bottom: 20rpx;
-}
+} */
 </style>

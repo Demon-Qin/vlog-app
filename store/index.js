@@ -11,12 +11,12 @@ export default new Vuex.Store({
 		//登陆
 		loginStatus:false,
 		token:false,
-		user:{}
+		user: {}
 	},
 	getters: {},
 	mutations: {
 		//登陆成功，用户数据存入本地
-		login(state,user){
+		login(state,user) {
 			
 			state.loginStatus = true
 			state.user = user
@@ -26,14 +26,14 @@ export default new Vuex.Store({
 		    console.log("AAAAAAAAA")
 		},
 		//退出登录
-		logout(state){
+		logout(state) {
 			state.loginStatus = false
 			state.user={}
 			state.tken= false
 			uni.removeStorageSync('user');
 		},
 		//修改资料
-		editUserInfo(state,obj){
+		editUserInfo(state,obj) {
 			if(state.user){
 				state.user.nickname = obj.nickname
 				state.user.password = obj.password
